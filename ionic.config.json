@@ -1,0 +1,7 @@
+{
+  "name": "ballot-cure",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
