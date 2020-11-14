@@ -1,0 +1,35 @@
+[
+  {
+    "id": "12345",
+    "voterFirstName": "Amanda",
+    "voterLastName": "Beverly",
+    "voterAddress": "123 Sesame Street",
+    "issueId": "1",
+    "issueDescription": "Signature verification needed",
+    "issueResolutionFile": null,
+    "issueResolutionMessage": null,
+    "pin": "7777"
+  },
+  {
+    "id": "54321",
+    "voterFirstName": "Brian",
+    "voterLastName": "Lankershim",
+    "voterAddress": "321 Avocado Street",
+    "issueId": "2",
+    "issueDescription": "Address verification needed",
+    "issueResolutionFile": null,
+    "issueResolutionMessage": null,
+    "pin": "8888"
+  },
+  {
+    "id": "12321",
+    "voterFirstName": "Whitney",
+    "voterLastName": "Munoz",
+    "voterAddress": "123 Olive Street",
+    "issueId": "3",
+    "issueDescription": "Identify verification needed",
+    "issueResolutionFile": null,
+    "issueResolutionMessage": null,
+    "pin": "9999"
+  }
+]
