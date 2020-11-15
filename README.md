@@ -353,7 +353,7 @@ ionic cap add android
 
 #### Add to Android Main Activity
 
-For Android, you’ll need to import and register the plugin in your MainActivity file. In our application, this is in android/app/src/main/java/io/ionic/starter/MainActivity.java.
+For Android, you’ll need to import and register the plugin in your `MainActivity` file. In our application, this is in `android/app/src/main/java/io/ionic/starter/MainActivity.java`.
 
 This file is generated when we build the Ionic app, so ensure you register the plugin after completing and building the source code.
 
