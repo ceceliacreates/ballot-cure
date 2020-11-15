@@ -144,7 +144,7 @@ export default defineComponent({
       const { Http } = Plugins;
       const response = await Http.request({
         method: "GET",
-        url: `http://localhost:8085/.netlify/functions/server/ballots/${id}`,
+        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${id}`,
       });
       const ballot = response.data;
       return ballot;
@@ -162,7 +162,7 @@ export default defineComponent({
     async submit() {
       const { Http } = Plugins;
       const ret = await Http.uploadFile({
-        url: `http://localhost:8085/.netlify/functions/server/ballots/${this.ballotId}`,
+        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${this.ballotId}`,
         name: this.fileName,
         filePath: this.fileName,
       });
