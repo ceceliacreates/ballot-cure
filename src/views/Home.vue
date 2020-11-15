@@ -2,7 +2,10 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>BallotCure</ion-title>
+        <ion-title
+          ><ion-icon :icon="shieldCheckmarkOutline" size="large"></ion-icon
+          >BallotCure</ion-title
+        >
       </ion-toolbar>
     </ion-header>
 
@@ -14,6 +17,12 @@
       </ion-header>
 
       <div id="container" class="ion-padding-horizontal">
+        <div class="ion-padding">
+          <ion-text color="primary">
+            <h2>Instructions</h2>
+          </ion-text>
+          <p>Enter the ballot ID provided in your notice.</p>
+        </div>
         <ion-item>
           <ion-label>Enter Ballot ID</ion-label>
           <ion-input v-model="searchInput" type="text"></ion-input>
@@ -61,6 +70,7 @@ import {
   IonButton,
   IonText,
 } from "@ionic/vue";
+import { shieldCheckmarkOutline } from "ionicons/icons";
 import { defineComponent, onMounted, ref, watch, reactive } from "vue";
 import "@capacitor-community/http";
 import { Plugins } from "@capacitor/core";
@@ -83,6 +93,11 @@ export default defineComponent({
     IonCardContent,
     IonButton,
     IonText,
+  },
+  setup() {
+    return {
+      shieldCheckmarkOutline,
+    };
   },
   data() {
     return {
