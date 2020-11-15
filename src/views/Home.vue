@@ -8,14 +8,12 @@
         >
       </ion-toolbar>
     </ion-header>
-
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">BallotCure</ion-title>
         </ion-toolbar>
       </ion-header>
-
       <div id="container" class="ion-padding-horizontal">
         <div class="ion-padding">
           <ion-text color="primary">
@@ -38,7 +36,6 @@
               >
               <ion-card-subtitle>{{ ballot.voterAddress }}</ion-card-subtitle>
             </ion-card-header>
-
             <ion-card-content>
               <ion-text color="danger"
                 ><h2>Issue Requiring Resolution:</h2></ion-text
@@ -131,7 +128,6 @@ export default defineComponent({
     };
   },
   watch: {
-    // whenever question changes, this function will run
     ballotId(newBallotId, oldBallotId) {
       this.getBallot(newBallotId);
     },
