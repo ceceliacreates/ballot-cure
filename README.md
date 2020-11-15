@@ -42,7 +42,7 @@ Our application provides a simple interface for the following functionality:
 3. Allows user to upload a file to resolve the issue
 4. Submits the file for the corresponding ballot ID
 
-![video of app functionality](https://raw.githubusercontent.com/ceceliacreates/ballot-cure/main/BallotCureDemo.gif)
+![video of app functionality](https://raw.githubusercontent.com/ceceliacreates/ballot-api/main/BallotCureDemo.gif)
 
 ## Building the ballot search with native HTTP requests
 
@@ -194,7 +194,7 @@ Note: Because we aren’t updating a database, our data is not persistent. This 
 
 So what happens when we make a request to the endpoint directly from an application running in the browser?
 
-![screenshot of a CORS error](https://raw.githubusercontent.com/ceceliacreates/ballot-cure/main/cors.PNG)
+![screenshot of a CORS error](https://raw.githubusercontent.com/ceceliacreates/ballot-api/main/cors.PNG)
 
 😱
 
