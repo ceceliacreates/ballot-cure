@@ -42,6 +42,8 @@ Our application provides a simple interface for the following functionality:
 3. Allows user to upload a file to resolve the issue
 4. Submits the file for the corresponding ballot ID
 
+![video of app functionality](https://raw.githubusercontent.com/ceceliacreates/ballot-cure/main/BallotCureDemo.gif)
+
 ## Building the ballot search with native HTTP requests
 
 ### Installation and setup
