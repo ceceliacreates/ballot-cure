@@ -47,6 +47,27 @@
             </ion-card-content>
           </ion-card>
         </transition>
+        <transition name="fade">
+          <div v-if="ballot.voterFirstName">
+            <div class="fileUpload ion-padding">
+              <span>Click to upload required document</span>
+              <ion-input
+                type="file"
+                name="file"
+                v-model="fileName"
+                class="upload"
+              ></ion-input>
+            </div>
+            <transition name="fade">
+              <div v-if="fileName">
+                <p>{{ fileName.slice(12) }}</p>
+              </div>
+            </transition>
+            <ion-button class="ion-margin" @click="submit" size="large"
+              >Submit</ion-button
+            >
+          </div>
+        </transition>
       </div>
     </ion-content>
   </ion-page>
@@ -69,6 +90,7 @@ import {
   IonCardContent,
   IonButton,
   IonText,
+  IonIcon,
 } from "@ionic/vue";
 import { shieldCheckmarkOutline } from "ionicons/icons";
 import { defineComponent, onMounted, ref, watch, reactive } from "vue";
@@ -93,6 +115,7 @@ export default defineComponent({
     IonCardContent,
     IonButton,
     IonText,
+    IonIcon,
   },
   setup() {
     return {
@@ -104,6 +127,7 @@ export default defineComponent({
       searchInput: "",
       ballotId: "",
       ballot: {},
+      fileName: "",
     };
   },
   watch: {
@@ -132,11 +156,33 @@ export default defineComponent({
         this.ballotId = newBallotId;
       }
     },
+    submit() {
+      console.log(this.fileName);
+    },
   },
 });
 </script>
 
 <style scoped>
+.fileUpload {
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+  background-color: rgb(174, 174, 175);
+  border-radius: 5px;
+  color: white;
+}
+.upload {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s ease;
