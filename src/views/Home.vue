@@ -13,9 +13,31 @@
         </ion-toolbar>
       </ion-header>
 
-      <div id="container">
-        <p>{{ ballot.voterFirstName }} {{ ballot.voterLastName }}</p>
-        <p>{{ ballot.issueDescription }}</p>
+      <div id="container" class="ion-padding-horizontal">
+        <ion-item>
+          <ion-label>Enter Ballot ID</ion-label>
+          <ion-input v-model="searchInput" type="text"></ion-input>
+          <ion-button @click="search">Search</ion-button>
+        </ion-item>
+        <transition name="fade">
+          <ion-card v-if="ballot.voterFirstName">
+            <ion-card-header>
+              <ion-card-title>Ballot Information</ion-card-title>
+              <ion-card-subtitle
+                >{{ ballot.voterFirstName }}
+                {{ ballot.voterLastName }}</ion-card-subtitle
+              >
+              <ion-card-subtitle>{{ ballot.voterAddress }}</ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <ion-text color="danger"
+                ><h2>Issue Requiring Resolution:</h2></ion-text
+              >
+              <p>{{ ballot.issueDescription }}</p>
+            </ion-card-content>
+          </ion-card>
+        </transition>
       </div>
     </ion-content>
   </ion-page>
@@ -28,25 +50,20 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonInput,
+  IonLabel,
+  IonItem,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonButton,
+  IonText,
 } from "@ionic/vue";
-import { defineComponent, onMounted, ref } from "vue";
-
+import { defineComponent, onMounted, ref, watch, reactive } from "vue";
 import "@capacitor-community/http";
-
 import { Plugins } from "@capacitor/core";
-
-async function fetchBallot(ballotId: string) {
-  const { Http } = Plugins;
-
-  const response = await Http.request({
-    method: "GET",
-    url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${ballotId}`,
-  });
-
-  const ballot = response.data;
-
-  return ballot;
-}
 
 export default defineComponent({
   name: "Home",
@@ -56,25 +73,64 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
+    IonInput,
+    IonLabel,
+    IonItem,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
+    IonButton,
+    IonText,
   },
-  setup() {
-    const ballot = ref({});
-    const ballotId = ref("12345");
-    const getBallot = async () => {
-      ballot.value = await fetchBallot(ballotId.value);
-    };
-
-    onMounted(getBallot);
-
+  data() {
     return {
-      ballot,
-      getBallot,
+      searchInput: "",
+      ballotId: "",
+      ballot: {},
     };
+  },
+  watch: {
+    // whenever question changes, this function will run
+    ballotId(newBallotId, oldBallotId) {
+      this.getBallot(newBallotId);
+    },
+  },
+  methods: {
+    async fetchBallot(id: string) {
+      const { Http } = Plugins;
+      const response = await Http.request({
+        method: "GET",
+        url: `http://localhost:8085/.netlify/functions/server/ballots/${id}`,
+      });
+      const ballot = response.data;
+      return ballot;
+    },
+    async getBallot(id: string) {
+      const newBallot = await this.fetchBallot(id);
+      this.ballot = newBallot;
+    },
+    search() {
+      if (this.searchInput.length === 5) {
+        const newBallotId = this.searchInput;
+        this.ballotId = newBallotId;
+      }
+    },
   },
 });
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 #container {
   text-align: center;
 
