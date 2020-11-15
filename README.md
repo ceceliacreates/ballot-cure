@@ -376,8 +376,6 @@ public void onCreate(Bundle savedInstanceState) {
 
 You can then open the project and run the application.
 
-SCREENSHOT OF ANDROID EMULATOR APP
-
 ## Going further with HTTP Plugin
 
 We’ve outlined in detail how to use native HTTP requests and file uploads with the plugin. In addition, you can also:
@@ -389,4 +387,4 @@ If we wanted to demonstrate these with our application, we could add functionali
 
 You can do a lot or a little with the HTTP Plugin, so it’s a good fit for a variety of projects that need native HTTP requests, file upload and downloads, and cookie management.
 
-For more information, check out the [plugin repository here](https://github.com/capacitor-community/http), and the code for this tutorial application here.
+For more information, check out the [plugin repository here](https://github.com/capacitor-community/http), and the code for [this tutorial application here](https://github.com/ceceliacreates/ballot-cure).
