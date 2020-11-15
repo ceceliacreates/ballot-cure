@@ -23,8 +23,14 @@
         </div>
         <ion-item>
           <ion-label>Enter Ballot ID</ion-label>
-          <ion-input v-model="searchInput" type="text"></ion-input>
-          <ion-button @click="search">Search</ion-button>
+          <ion-input
+            data-cy="search-input"
+            v-model="searchInput"
+            type="text"
+          ></ion-input>
+          <ion-button data-cy="search-button" @click="search"
+            >Search</ion-button
+          >
         </ion-item>
         <transition name="fade">
           <ion-card v-if="ballot.voterFirstName">
@@ -49,6 +55,7 @@
             <div class="fileUpload ion-padding">
               <span>Click to upload required document</span>
               <ion-input
+                data-cy="file-upload"
                 type="file"
                 name="file"
                 v-model="fileName"
@@ -137,7 +144,7 @@ export default defineComponent({
       const { Http } = Plugins;
       const response = await Http.request({
         method: "GET",
-        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${id}`,
+        url: `http://localhost:8085/.netlify/functions/server/ballots/${id}`,
       });
       const ballot = response.data;
       return ballot;
@@ -152,8 +159,13 @@ export default defineComponent({
         this.ballotId = newBallotId;
       }
     },
-    submit() {
-      console.log(this.fileName);
+    async submit() {
+      const { Http } = Plugins;
+      const ret = await Http.uploadFile({
+        url: `http://localhost:8085/.netlify/functions/server/ballots/${this.ballotId}`,
+        name: this.fileName,
+        filePath: this.fileName,
+      });
     },
   },
 });

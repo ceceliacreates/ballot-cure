@@ -10,7 +10,7 @@ By using native HTTP requests, developers prevent the dreaded, frustrating CORS 
 
 In this tutorial, we’ll be demonstrating two main features of the HTTP plugin:
 
-1. Native HTTP Requests (GET & POST)
+1. Native HTTP Requests (GET)
 2. File uploads
 
 This tutorial is divided into four main sections.
@@ -32,7 +32,7 @@ We’ll be building a ballot curing app using the new Ionic Vue. Ballot curing b
 
 The functionality is similar to any system that requires a user to submit documents for verification. These are typical in financial, education, healthcare, and government applications where users may need to submit legal documents like a driver’s license or power of attorney.
 
-Note: If you like the idea of contributing to open-source projects that support government and civic programs, check out [Code for America](https://www.codeforamerica.org/).
+> Note: If you like the idea of contributing to open-source projects that support government and civic programs, check out [Code for America](https://www.codeforamerica.org/).
 
 ### App functionality
 
@@ -59,17 +59,56 @@ Then we cd into our project directory and run `ionic serve` to start up the deve
 
 To focus on the functionality of the HTTP plugin, we’ll keep the UI simple with a single view. We can leverage components from the [Ionic Framework UI library](https://ionicframework.com/docs/components) to build our view quickly.
 
-Let’s start with the part of the application where the user searches for a ballot by ID. In our Home.vue, we will delete the content in the container div and replace it with text instructions, an input field, and a search button. We are using v-model to bind the input field to the searchInput data field.
+Let’s start with the part of the application where the user searches for a ballot by ID. In our `Home.vue`, we will delete the content in the container `div` and replace it with text instructions, an input field, and a search button. We are using `v-model` to bind the input field to the `searchInput` data field.
 
-CODE SNIPPET
+```javascript
+<div class="ion-padding">
+<ion-text color="primary">
+    <h2>Instructions</h2>
+</ion-text>
+<p>Enter the ballot ID provided in your notice.</p>
+</div>
+<ion-item>
+    <ion-label>Enter Ballot ID</ion-label>
+    <ion-input v-model="searchInput" type="text"></ion-input>
+    <ion-button @click="search">Search</ion-button>
+</ion-item>
+```
 
-We’ll also need a container to display the results of the ballot search. In this div, we’ll display the voter name, address, and ballot issue that are returned. We’ll use v-if to only display this component once we have a ballot, and use the transition component to fade in on appearance.
+We’ll also need an area to display the results of the ballot search. In an `ion-card` component, we’ll display the voter name, address, and ballot issue that are returned. We’ll use `v-if` to only display this component once we have a ballot, and wrap it in a `transition` component to fade in on appearance.
 
-CODE SNIPPET
+```javascript
+<transition name="fade">
+    <ion-card v-if="ballot.voterFirstName">
+        <ion-card-header>
+        <ion-card-title>Ballot Information</ion-card-title>
+        <ion-card-subtitle
+                >{{ ballot.voterFirstName }}
+                {{ ballot.voterLastName }}</ion-card-subtitle
+              >
+        <ion-card-subtitle>{{ ballot.voterAddress }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-text color="danger"
+                ><h2>Issue Requiring Resolution:</h2></ion-text
+              >
+            <p>{{ ballot.issueDescription }}</p>
+        </ion-card-content>
+    </ion-card>
+</transition>
+```
 
-Finally, let’s update the name in the header and add an icon for styling. We’ll need to return our icon in the setup() function of our component definition.
+Finally, let’s update the name in the header and add an icon for styling. We’ll need to return our icon in the `setup()` function of our component definition.
 
-CODE SNIPPET
+```javascript
+<ion-header :translucent="true">
+    <ion-toolbar>
+        <ion-title>
+            <ion-icon :icon="shieldCheckmarkOutline" size="large"></ion-icon>BallotCure
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+```
 
 ### Building the front-end logic
 
@@ -77,25 +116,65 @@ Now let’s set up the logic for our component. We’ll use the Composition API 
 
 For the search functionality, we’ll need the following:
 
-- Data fields for the searchInput, ballotId, and ballot
-- A search() method to handle the button click, validate the input, and set the ballotId
-- A watcher to trigger our getBallot() method whenever the ballotId is updated
-- A getBallot() method to get the ballot for the given ballotId and update our ballot data field
-- A helper fetchBallot() method to handle the API call associated with getting the ballot
+- Data fields for the `searchInput`, `ballotId`, and `ballot`
+- A `search()` method to handle the button click, validate the input, and set the `ballotId`
+- A watch to trigger our `getBallot()` method whenever the `ballotId` is updated
+- A `getBallot()` method to get the ballot for the given `ballotId` and update our `ballot` data field
+- A helper `fetchBallot()` method to handle the API call associated with getting the ballot
 
 This is what our code looks like inside our composition function:
 
 data()
 
-CODE SNIPPET
+```javascript
+data() {
+    return {
+      searchInput: "",
+      ballotId: "",
+      ballot: {},
+      fileName: "",
+    };
+  },
+```
 
 watch:
 
-CODE SNIPPET
+```javascript
+  watch: {
+    ballotId(newBallotId, oldBallotId) {
+      this.getBallot(newBallotId);
+    },
+  },
+```
 
 methods:
 
-CODE SNIPPET
+```javascript
+methods: {
+    async fetchBallot(id: string) {
+      const { Http } = Plugins;
+      const response = await Http.request({
+        method: "GET",
+        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${id}`,
+      });
+      const ballot = response.data;
+      return ballot;
+    },
+    async getBallot(id: string) {
+      const newBallot = await this.fetchBallot(id);
+      this.ballot = newBallot;
+    },
+    search() {
+      if (this.searchInput.length === 5) {
+        const newBallotId = this.searchInput;
+        this.ballotId = newBallotId;
+      }
+    },
+    submit() {
+      console.log(this.fileName);
+    },
+  },
+```
 
 ### Making requests to the API
 
@@ -105,8 +184,8 @@ We’ll be making requests to an Express API deployed as a [Netlify Function](ht
 
 Our app will make two requests to a single `/ballots/:id` endpoint:
 
-1. A GET that returns the ballot matching the passed ID
-2. A POST request that updates the ballot matching the passed ID
+1. A `GET` that returns the ballot matching the passed ID
+2. A `POST` request that updates the ballot matching the passed ID (handled by our `HTTP.fileUpload()` function)
 
 Note: Because we aren’t updating a database, our data is not persistent. This Function is just for demonstration and to process our front-end request.
 
@@ -114,7 +193,7 @@ Note: Because we aren’t updating a database, our data is not persistent. This 
 
 So what happens when we make a request to the endpoint directly from an application running in the browser?
 
-![alt_text]("./cors.PNG")
+![screenshot of a CORS error](https://raw.githubusercontent.com/ceceliacreates/ballot-cure/main/cors.PNG)
 
 😱
 
@@ -155,51 +234,111 @@ ionic cap sync
 
 When using the plugin for HTTP requests, you’ll need to import the package as well as Plugins from capacitor/core. In our application, we do this right in the script section of our Home view.
 
-CODE SNIPPET
+```javascript
+import "@capacitor-community/http";
+import { Plugins } from "@capacitor/core";
+```
 
-Then, we destructure the plugin as close to its usage as possible. In our app, we do this in our fetchBallot() method that uses HTTP.request() to make the native request that returns our ballot information.
+Then, we destructure the plugin as close to its usage as possible. In our app, we do this in our `fetchBallot()` method that uses `HTTP.request()` to make the native request that returns our ballot information.
 
-CODE SNIPPET
+```javascript
+async fetchBallot(id: string) {
+    const { Http } = Plugins;
+    const response = await Http.request({
+        method: "GET",
+        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${id}`,
+      });
+    const ballot = response.data;
+    return ballot;
+},
+```
 
-Now when we search for our ballot, the GET request will resolve like magic, because it’s being handled natively by the plugin.
+Now when we search for our ballot, the `GET` request will resolve like magic, because it’s being handled natively by the plugin.
 
-Note: The ballot-api repository has a version of the API that you can run locally with cors enabled for testing during development.
+> Note: The ballot-api repository has a version of the API that you can run locally with cors enabled for testing during development. You can access it on the cors-enabled branch.
 
-We’ll go ahead and use HTTP.request() again for our POST request for the ballot submission.
-
-CODE SNIPPET
-
-But first, we need to enable file uploads so our user can submit the required document.
+The same function can be used for `POST` requests as well. For our application, we'll let the HTTP Plugin `fileUpload()` functionality handle the request for us.
 
 ## File uploads with the HTTP Plugin
 
 ### Adding the file selector and submit button
 
-Let’s add the elements we’ll need to our template. To better style our file selector, we’ll wrap the input in a div and use CSS to override the display. We are using v-model to bind this to a fileName data field. Because we have set a type of “file” on the ion-input, clicking the input will automatically open the system’s file selector.
+Let’s add the elements we’ll need to our template. To better style our file selector, we’ll wrap the input in a `div` and use CSS to override the display. We are using `v-model` to bind this to a `fileName` data field. Because we have set a type of "file" on the `ion-input`, clicking the input will automatically open the system's file selector.
 
-CODE SNIPPET
+```javascript
+<div v-if="ballot.voterFirstName">
+  <div class="fileUpload ion-padding">
+    <span>Click to upload required document</span>
+    <ion-input
+      type="file"
+      name="file"
+      v-model="fileName"
+      class="upload"
+    ></ion-input>
+  </div>
+</div>
+```
 
-We also have a div that shows the selected file name (with the fakepath removed) that only appears once a file is selected. Our submit button triggers the submit() method on click.
+We also have a `div` that shows the selected file name (with the fakepath removed) that only appears once a file is selected. Our submit button triggers the `submit()` method on click.
 
-CODE SNIPPET
+```javascript
+<transition name="fade">
+    <div v-if="fileName">
+        <p>{{ fileName.slice(12) }}</p>
+    </div>
+</transition>
+<ion-button class="ion-margin" @click="submit" size="large">Submit</ion-button>
+```
 
-For our logic, we’ll add our data field for fileName and write our submit() method.
+For our logic, we’ll add our data field for `fileName` and write our `submit()` method.
 
 ### Using the HTTP.fileUpload() method
 
 [Behind the scenes, the HTTP plugin submits the file as formData to our API](https://github.com/capacitor-community/http/blob/master/src/web.ts#L162). It submits the file uploaded, as well as the file name. You can see the [full list of options available on the fileUpload function here](https://github.com/capacitor-community/http/blob/master/src/definitions.ts#L69).
 
-Inside our submit() method, we’ll use the HTTP.fileUpload() method and pass the URL of our endpoint as well as the fileName. The plugin function will submit the file as a POST request to our endpoint.
+Inside our `submit()` method, we’ll use the `HTTP.fileUpload()` method and pass the URL of our endpoint as well as the `fileName`. The plugin function will submit the file as a `POST` request to our endpoint.
 
-CODE SNIPPET
+```javascript
+async submit() {
+    const { Http } = Plugins;
+    const ret = await Http.uploadFile({
+        url: `https://hungry-brown-da828c.netlify.app/.netlify/functions/server/ballots/${this.ballotId}`,
+        name: this.fileName,
+        filePath: this.fileName,
+});
+},
+```
 
 ### Handling the uploaded file in our API
 
 In our example, we process this file using an [Express multer middleware.](http://expressjs.com/en/resources/middleware/multer.html) We can then set this file as a value in our ballot.
 
-CODE SNIPPET
+```javascript
+// middleware to handle the file upload
+const multer = require("multer");
+const upload = multer({});
+
+// Express can access the submitted file using req.file
+router.post("/ballots/:id", upload.any(), function(req, res) {
+  const ballotId = req.params.id;
+  const ballotIndex = ballots.findIndex((ballot) => ballot.id === ballotId);
+  const ballotToUpdate = ballots[ballotIndex];
+
+  if (req.file) {
+    ballotToUpdate.issueResolutionFile = req.file;
+    res.json(ballotToUpdate);
+  } else {
+    const error = {
+      message: "file required",
+    };
+    res.json(error);
+  }
+});
+```
 
 For additional security, we could require the user enter a PIN that we validate on our API before updating.
+
+Currently, the `HTTP.fileUpload()` function returns an empty object, but in future versions we could use the `POST` request response to confirm the upload was successfule for the user.
 
 ## Building our native application
 
