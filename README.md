@@ -22,9 +22,8 @@ This tutorial is divided into four main sections.
 
 The application and API code are open-sourced on GitHub:
 
-[ballot-cure repository](https://github.com/ceceliacreates/ballot-cure)
-
-[ballot-api repository](https://github.com/ceceliacreates/ballot-api)
+- [ballot-cure repository](https://github.com/ceceliacreates/ballot-cure)
+- [ballot-api repository](https://github.com/ceceliacreates/ballot-api)
 
 ## What we’re building
 
@@ -318,14 +317,13 @@ In our example, we process this file using an [Express multer middleware.](http:
 const multer = require("multer");
 const upload = multer({});
 
-// Express can access the submitted file using req.file
+// Express can access the submitted file on the request body
 router.post("/ballots/:id", upload.any(), function(req, res) {
   const ballotId = req.params.id;
   const ballotIndex = ballots.findIndex((ballot) => ballot.id === ballotId);
   const ballotToUpdate = ballots[ballotIndex];
-
-  if (req.file) {
-    ballotToUpdate.issueResolutionFile = req.file;
+  if (req.body) {
+    ballotToUpdate.issueResolutionFile = req.body;
     res.json(ballotToUpdate);
   } else {
     const error = {
