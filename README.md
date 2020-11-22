@@ -338,7 +338,7 @@ router.post("/ballots/:id", upload.any(), function(req, res) {
 
 For additional security, we could require the user enter a PIN that we validate on our API before updating.
 
-Currently, the `HTTP.fileUpload()` function returns an empty object, but in future versions we could use the `POST` request response to confirm the upload was successfule for the user.
+Currently, the `HTTP.fileUpload()` function returns an empty object, but in future versions we could use the `POST` request response to confirm the upload was successful for the user.
 
 ## Building our native application
 
