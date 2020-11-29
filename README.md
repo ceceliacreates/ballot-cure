@@ -1,4 +1,4 @@
-# Diving into the Capacitor Community HTTP Plugin
+# Building a Ballot Curing App with the Capacitor Community HTTP Plugin
 
 ## What is the Capacitor Community HTTP Plugin?
 
